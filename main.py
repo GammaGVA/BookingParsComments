@@ -1,10 +1,12 @@
 import requests
 from params_headers import params, headers
 from random import randint
+from time import time
 from page_pars import pars, pagepars
 
 Referer = input('Введите url отеля: ')
 # Запрашиваем ссылку
+start = time()  # Для замера времени за сколько пропарсит всё.
 headers['Referer'] = Referer
 # Говорим что мы с неё и переходим
 
@@ -85,4 +87,6 @@ if maxnumberpage > 1:  # Если страниц больше 1, то парси
         comment = pars(soup=soup)
         comments += comment
 
-print(*comments, sep="\n")
+print(*comments,
+      f'Всё пропарсил за {time() - start}',
+      sep=f"\n{'_'*30}\n")
