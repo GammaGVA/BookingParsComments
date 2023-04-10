@@ -11,13 +11,37 @@ pagename = Referer.split('/')[5].split('.')[0]
 points = Referer.split('?')[1]  # Отберём параметры.
 points = points.split('&')[:-1]  # Последний элементы мусорный.
 
+xuz = lambda: f'16809{randint(0, 99999999):08}'  # Не знаю что это, но у него 16809 не изменно и далее 8 цифр меняются.
+# Без него/с любым значением работает, решил оставить в таком виде. Вызывается в параметрах.
+params = {
+    'cc1': cc1,
+    'pagename': pagename,
+    'r_lang': '',
+    'review_topic_category_id': '',
+    'type': 'total',
+    'score': '',
+    'sort': '',
+    'time_of_year': '',
+    'dist': '1',
+    'rows': '10',
+    'rurl': '',
+    'text': '',
+    'translate': '',
+    '_': xuz(),
+    'offset': '0',
+}
+
 if len(points) == 4:
     # Ссылка может состоять двумя видами. Либо 4 элемента и в 4 вся инфа.
     aid = points[0].split('=')[1]
+    params['aid'] = aid
     label = points[1].split('=')[1]
+    params['label'] = label
     sid = points[2].split('=')[1]
+    params['sid'] = sid
 
     srpvid = points[3].split(';')[-3].split('=')[1]
+    params['srpvid'] = srpvid
 
 else:
     # Либо Много элементов и могут быть в перемешку.
@@ -25,15 +49,18 @@ else:
         pp = p.split('=')
         if pp[0] == 'aid':
             aid = pp[1]
+            params['aid'] = aid
         elif pp[0] == 'label':
             label = pp[1]
+            params['label'] = label
         elif pp[0] == 'sid':
             sid = pp[1]
+            params['sid'] = sid
         elif pp[0] == 'srpvid':
             srpvid = pp[1]
+            params['srpvid'] = srpvid
 
-xuz = lambda: f'16809{randint(0, 99999999):08}'  # Не знаю что это, но у него 16809 не изменно и далее 8 цифр меняются.
-# Без него/с любым значением работает, решил оставить в таком виде. Вызывается в параметрах.
+
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:103.0) Gecko/20100101 Firefox/103.0',
@@ -58,27 +85,7 @@ headers = {
 }
 # Оставил комментариями те данные, которые динамические. Другие длинные не менялись.
 
-params = {
-    'aid': aid,
-    'label': label,
-    'sid': sid,
-    'srpvid': srpvid,
-    'cc1': cc1,
-    'pagename': pagename,
-    'r_lang': '',
-    'review_topic_category_id': '',
-    'type': 'total',
-    'score': '',
-    'sort': '',
-    'time_of_year': '',
-    'dist': '1',
-    'rows': '10',
-    'rurl': '',
-    'text': '',
-    'translate': '',
-    '_': xuz(),
-    'offset': '0',
-}
+
 session = requests.Session()
 # Скорее всего Session лишнее, работает и без него. Но решил перебдеть.
 # Так как я не передают конкретные печеньки(протухнут спустя время), решил использовать сессию.
