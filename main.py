@@ -3,6 +3,7 @@ from params_headers import params, headers
 from random import randint
 from time import time
 from page_pars import pars, pagepars
+from tqdm import tqdm
 
 Referer = input('Введите url отеля: ')
 # Запрашиваем ссылку
@@ -16,12 +17,12 @@ params['cc1'] = cc1
 
 pagename = Referer.split('/')[5].split('.')[0]
 params['pagename'] = pagename
-# Добавляем параметр pagename, он самы основной тут.
+# Добавляем параметр pagename, он самый основной тут.
 
 points = Referer.split('?')[1]  # Отберём параметры.
 points = points.split('&')[:-1]  # Последний элементы мусорный.
 
-xuz = lambda: f'16809{randint(0, 99999999):08}'  # Не знаю что это, но у него 16809 не изменно и далее 8 цифр меняются.
+xuz = lambda: f'16809{randint(0, 99999999):08}'  # Не знаю что это, но у него 16809 не изменено и далее 8 цифр меняются.
 # Без него/с любым значением работает, решил оставить в таком виде. Вызывается в параметрах.
 params['_'] = xuz()
 # Добавляем параметр _
@@ -72,15 +73,14 @@ else:
 session = requests.Session()
 # Скорее всего Session лишнее, работает и без него. Но решил перебдеть.
 # Так как я не передают конкретные печеньки(протухнут спустя время), решил использовать сессию.
-# На просторах Ру-нета читал не однократно, что сессия генирирует печеньки.
+# На просторах Ру-нета читал не однократно, что сессия генерирует печеньки.
 soup = pagepars(session=session, headers=headers, params=params)
 maxnumberpage = int(soup.find_all('span', {'class': 'bui-u-sr-only'})[-1].text.split()[-1])  # Кол-во страниц
 comments = pars(soup=soup)  # Парсим первую страницу
-print(f'1/{maxnumberpage}')
 
 if maxnumberpage > 1:  # Если страниц больше 1, то парсим все остальные.
-    for numberpage in range(2, maxnumberpage + 1):
-        print(f'{numberpage}/{maxnumberpage}')
+    for numberpage in tqdm(range(2, maxnumberpage + 1)):
+        # os.system('clear')  # Не работает в терминале.
         params['offset'] = numberpage * 10
         params['_'] = xuz()
         soup = pagepars(session=session, headers=headers, params=params)
